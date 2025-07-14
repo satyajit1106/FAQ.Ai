@@ -1,7 +1,5 @@
 import streamlit as st
 import os
-
-from dotenv import load_dotenv
 from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.indexes import VectorstoreIndexCreator
@@ -10,11 +8,8 @@ from langchain.chains import RetrievalQA
 from langchain.vectorstores import Chroma
 from langchain_groq import ChatGroq
 
-load_dotenv()
-
-st.info("User friendly chat bot created by VOIS interns!:D")
 # Set your Groq API key
-os.environ["GROQ_API_KEY"] = os.environ.get("API_KEY")
+os.environ["GROQ_API_KEY"] = ""
 
 # Load PDF and create index
 @st.cache_resource
@@ -35,19 +30,15 @@ llm = ChatGroq(
 )
 
 # UI
-
-import streamlit as st
-
 col1, col2 = st.columns([1, 5])
 with col1:
     st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)  # Adds space above image
     st.image("bot.png", width=60)
 with col2:
     st.markdown(
-        "<span style='font-size: 2.5em; font-weight: bold; margin-bottom: 20px; display: inline-block;'>YRS BOT - Your Office Buddy</span>",
+        "<span style='font-size: 2.5em; font-weight: bold; margin-bottom: 20px; display: inline-block;'>BuddyBot - Your Office Buddy</span>",
         unsafe_allow_html=True
     )
-
 
 
 pdf_name = "AnswersNewComer.pdf"
@@ -66,13 +57,13 @@ if "messages" not in st.session_state:
 for message in st.session_state.messages:
     st.chat_message(message["role"]).markdown(message["content"])
 
-prompt = st.chat_input("Ask your question")
+prompt = st.chat_input("Ask your questions")
 
 if prompt:
     st.chat_message("user").markdown(prompt)
     st.session_state.messages.append({"role": "user", "content": prompt})
 
-    with st.spinner("Generating Response please wait..."):
+    with st.spinner("Generating Response, Please wait..."):
         response = qa_chain.run(prompt)
 
     st.chat_message("assistant").markdown(response)
